@@ -18,6 +18,19 @@ pipelines:
           - go test -race ./...
           - go test -cover -bench . -benchmem ./...
           - cp -r $GOPATH/src/mellium.im/xmpp/vendor /vendor
+    - step:
+        script:
+          - export PATH="/gosrc/bin:$PATH"
+          - go get -u golang.org/x/vgo
+          - cd "$GOPATH/src/golang.org/x/vgo" && git fetch https://go.googlesource.com/vgo refs/changes/78/95578/4 && git cherry-pick FETCH_HEAD && go install
+          - mkdir -p "$GOPATH/src/mellium.im/"
+          - ln -s "`pwd`" "$GOPATH/src/mellium.im/xmpp"
+          - cd "$GOPATH/src/mellium.im/xmpp"
+          - vgo version
+          - vgo env
+          - vgo vet ./...
+          - vgo test -race ./...
+          - vgo test -cover -bench . -benchmem ./...
 definitions:
   caches:
     vendor: /vendor
